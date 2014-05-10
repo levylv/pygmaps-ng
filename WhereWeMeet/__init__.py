@@ -1,7 +1,10 @@
 '''
 Where We Meet
 
-Tools for constructing a google map with contour lines of areas easiest for members of a group to get to.
+An example of drawing contour lines around areas of total drive time for 
+multiple drivers.  Data files were produced through copius calls to
+Google directions API.  This is an awkward strategy for deployment.  
+Implement your own solution
  
 Written by Elliot Hallmark (permafacture@gmail.com)
 
@@ -21,6 +24,8 @@ ur = [30.494243, -97.430981] #lat,long of lower left corner of area to consider
 ll = [30.116622, -97.76881] #lat,long of upper right corner of area to consider
 
 center = [(ll[0]+ur[0])/2,(ll[1]+ur[1])/2]
+
+file_count = 0 #number of files that are eventually summed together
 
 gridfilename = BASE_DIR+'data/_gridfile.csv'
     
@@ -60,7 +65,7 @@ def get_contour_paths(filename, n=10):
     levels = []
     colors = []
     for collection in C.collections:
-	print "type: {}".format(type(collection))
+	#/print "type: {}".format(type(collection))
         #colors.append(collection.get_color())
         ps = []
         for p in collection.get_paths():
@@ -71,9 +76,10 @@ def get_contour_paths(filename, n=10):
     #paths, colors of paths, and values represented by paths
     return levels,colors,C.levels
 
-def sum_files(source_path="data/",save_file='_sumfile.csv'):
+def sum_files(source_path=os.path.join(BASE_DIR,"data/"),save_file='_sumfile.csv'):
     '''create a file that sums all the travel times from all csv that 
     don't start with '_' in path.'''
+    global file_count
     import os
     path=source_path
     #first determine size of the grid from _gridfile.csv
@@ -88,10 +94,10 @@ def sum_files(source_path="data/",save_file='_sumfile.csv'):
     for f in os.listdir(path):
         ff = os.path.join(path,f)
         if f[0] != '_' and f[-3:] == 'csv' and os.path.isfile(ff):
-          #print "ff",f
+          file_count += 1
           with open(ff,'rb') as fff:
             r = csv.reader(fff,delimiter='\t', quotechar='"')
-            print 'open'
+            #print 'open'
             for i,row in enumerate(r):
                 for j,item in enumerate(row):
                     result[i][j] += float(item)
@@ -104,61 +110,38 @@ def sum_files(source_path="data/",save_file='_sumfile.csv'):
     
     return result
 
-_levels = ["Start"]
-_colors = ['#555555']
-
-n = 5
-_levels = range(n)
-colors = brewer2mpl.get_map('YlOrBr', 'Sequential', n)
-hexcolors = colors.hex_colors
-
-_colors = hexcolors
-
-def options():
-    global _levels,_colors
-    ret_dict = {}
-    for i in range(len(_levels)):
-	ret_dict[_levels[i]] = _colors[i]
-    print "Where we meet options: \n%s" % ret_dict
-    return ret_dict
-
-def data(query):
-    '''Return the JSON hash result of this app'''
-    global _levels,_colors
-    i = int(query)
-    #note, n is limited by max number colors in brewer map
-    n=5
-    levels,matplotlib_colors,legend = get_contour_paths('data/_sumfile.csv',20)
-    
+def data(levels=5,depth=20):
+    '''return list contour paths calculated from the sum file'''
+    global file_count,sum_files
+    sum_files()
+    paths,matplotlib_colors,legend = get_contour_paths('data/_sumfile.csv',depth)
+    n=levels
     colors = brewer2mpl.get_map('YlOrBr', 'Sequential', n)
+    result_list = [] 
     hexcolors = colors.hex_colors
     m = len(hexcolors)
-    #_levels = legend
-    #_colors = hexcolors
-    #TODO: Make json_hash['poygon']=list() to keep ordering, duh
-    json_hash = {'polygon':dict()}
-    old = []
-    #print "legend: {}".format(legend[i])
-    working_dict = {'strokeColor':almostblack,
-	    'fillColor':hexcolors[i],
-	    'fillOpacity':0.4,
-	    'meta':list(),
-	    'paths':list()}
-    ### WARNING: key should be legend[i], not i, but this is a temp fix
-    json_hash['polygon'][i]=working_dict
-    working_dict['meta'].append([
-	    'This is where the meta for level {} would be.'.format(i)])
-    tmp = list() #all polygons of this level are in the same set
-    for n,path in enumerate(levels[i]):
-            p =  map(list,path)
-	    tmp.append(p)
-    if i != 0:
-	#cut out the hole for the layer before it also
-	for n,path in enumerate(levels[i-1]):
-            p =  map(list,path)
-	    p.reverse()
-	    tmp.append(p)
+    result_list = []
 
-    working_dict['paths'].append(tmp)
+    for i in range(n):
+        
 
-    return json_hash
+	keyval = (float(legend[i])/60.)/file_count
+        working_dict = {'strokeColor':almostblack,
+	        'fillColor':hexcolors[i],
+	        'fillOpacity':0.4,
+	        'keyValue':'%0.0f min' % keyval,
+	        'polygon':list()}
+	tmp = list() #all polygons of this level are in the same set
+	for n,path in enumerate(paths[i]):
+	        p =  map(list,path)
+	        tmp.append(p)
+	if i != 0:
+	    #cut out the hole for the layer before it also
+	    for n,path in enumerate(paths[i-1]):
+	        p =  map(list,path)
+	        p.reverse()
+	        tmp.append(p)
+	
+	working_dict['polygon'].append(tmp)
+	result_list.append(working_dict)
+    return result_list

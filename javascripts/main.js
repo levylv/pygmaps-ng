@@ -33,8 +33,16 @@ function initialize() {
 	          },
 	          { Second Line with path, color, editable keys}, 
                  ],
+	       'polygons': [
+                {'polygon':[[[[pt1x,pt1y],[pt2x,p2y],...],[[hole1x,hole1y],...]]],
+		     // hole coordinates must be oppositly wound (cw vs ccw)
+                   'fillColor': '#0000FF',
+                   'fillOpacity': .5,
+		   'strokeColor': '#000000',
+		},
+               ]
              },
-            }      
+            },      
            ]
     '''
 
@@ -47,12 +55,15 @@ function initialize() {
     this.checked = false;
   });
 
+  /* OPTIONS TAG START */
   var centerlatlng = new google.maps.LatLng(30.320000, -97.770000);
   var myOptions = {
     zoom: 5,
     center: centerlatlng,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
+  /* OPTIONS TAG END */
+
   var infowindow = new google.maps.InfoWindow({
       content: 'Nothing to say, yet'
   });
@@ -161,7 +172,7 @@ function initialize() {
                  });
 
 		 if (!(typeof pathHash['editable'] === 'undefined')) {
-                    //alert(pathHash['editable']);
+                    alert(pathHash['editable']);
 		    polyline['editable'] = (pathHash['editable'] === 'true');
 		     }
                  
