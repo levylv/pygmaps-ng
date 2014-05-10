@@ -172,7 +172,7 @@ function initialize() {
                  });
 
 		 if (!(typeof pathHash['editable'] === 'undefined')) {
-                    alert(pathHash['editable']);
+                    //alert(pathHash['editable']);
 		    polyline['editable'] = (pathHash['editable'] === 'true');
 		     }
                  
