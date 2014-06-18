@@ -5,6 +5,8 @@ import WhereWeMeet as App3
 Run to build the example pages of pymaps-ng
 '''
 
+This has not been updated to new pymaps_ng objects!
+
 
 ###
 #
