@@ -87,7 +87,7 @@ class Map(object):
         jsonMarker ='/* INSERT JSON DATA HERE */' 
 
         data = self.data()
-        print "data: ",data
+        #print "data: ",data
         jsonData = str(data)[1:-1]	#strip the outer {} because it is being inserted into {}
         #print jsonData
      
@@ -145,6 +145,7 @@ class DataSet(object):
 
     def add_marker(self,pt,color='#000088',title=None,text=None):
         '''pt = (lat, lon)'''
+        color = color.strip('#') #the one time we dont want '#'
         result = {'lat':pt[0],'lon':pt[1],'color':color}
         if title:
          result['title'] = title
@@ -160,9 +161,8 @@ class DataSet(object):
     def add_polygon(self,pts,fillColor="#880088",fillOpacity=.8,strokeColor="#000000"):
         ''' pts = [[[[pt1x,pt1y],[pt2x,p2y],...],[[hole1x,hole1y],...]]]
             holes (inner polgons) must be oppositely wound, CW vs CCW '''
-        result = {'polygon':pts,'fillColor':fillColor,'fillOpacity':fillOpacity,
-                    'strokeColor':strokeColor}
-        return result
+        result = {'polygon':pts,'fillColor':fillColor,'fillOpacity':fillOpacity,'strokeColor':strokeColor}
+        self.polygons.append(result)
 
     def data(self):
         '''return data'''
@@ -192,7 +192,7 @@ def csv2markers(infile,default_color='#000088'):
     	    break
     
     	try:
-    	    color = str((row['color']).replace('#',''))
+    	    color = str(row['color'].replace('','')) #replace is to trigger error for None
     	except AttributeError:
     	    #if only one point has a color, those after it will have the same color
     	    pass
@@ -266,6 +266,7 @@ def map_from_csvs(data_dir = './example_data'):
           App2/
             ...
     '''
+    color = "#FFFFFF"
     mymap = Map()
     x = path.join	    #shorthand later
     #first directory level is app names
@@ -291,11 +292,9 @@ def map_from_csvs(data_dir = './example_data'):
                      for line in csv2lines(x(data_dir,x(appname, x(datasetname, x('%s.csv' % primitive))))):
                         pts, color = line
                         dataset.add_line(pts,color=color)
-                try:
-                    dataset.key_color = color
-                except NameError :
-                    color = '#FFFFFF'
-                    dataset.key_color = color
+                if color[0] != '#':
+                  color = '#'+color
+                dataset.key_color = color
     return mymap
 
 

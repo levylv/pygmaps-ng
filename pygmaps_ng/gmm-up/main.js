@@ -215,7 +215,7 @@ function initialize() {
 	    else { title = metaHash['title']; };
 
             $("#"+app+"_app_list").append("<li>\
-              <span class='color-box' style='background: #"+color+";'></span>\
+              <span class='color-box' style='background:"+color+";'></span>\
               <input type='checkbox' data-type='"+type+"' class='map-option-"+app+"'>"+title+"\
             </li>");
          };

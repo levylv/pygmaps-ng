@@ -5,7 +5,13 @@ Create stand alone google maps data visualizations.
 
 Data is grouped into datasets of points, lines and complex polygons, which are grouped into Apps.  Visibility of data sets and groups of data sets (apps) can be toggled.
 
-example:
+Installation:
+
+    pip can install this pygmaps_ng into a virtual env or system wide
+
+    $ pip install git+https://github.com/Permafacture/pygmaps-ng.git#Egg=pygmaps_ng
+
+Usage Example:
 
     from pygmaps_ng import *
     
