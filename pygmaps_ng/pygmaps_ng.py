@@ -146,8 +146,15 @@ class DataSet(object):
 
     def add_marker(self,pt,color='#000088',title=None,text=None):
         '''pt = (lat, lon)'''
+        try:
+          #check type and shape of pt
+          if len([float(x) for x in pt]) != 2:
+            raise ValueError
+        except ValueError:
+          print "Expected pt to be [float, float] but got",type(pt),pt
+          raise
         color = color.strip('#') #the one time we dont want '#'
-        result = {'lat':pt[0],'lon':pt[1],'color':color}
+        result = {'lat':str(pt[0]),'lon':str(pt[1]),'color':color}
         if title:
          result['title'] = title
         if text:
@@ -156,12 +163,22 @@ class DataSet(object):
 
     def add_line(self,pts,color="#880000"):
         '''pts is a list of lists, the inner list being [lat,lon]'''
+        try:
+           if not len([[float(x),float(y)] for x,y in pts]) > 1:
+             raise ValueError
+        except ValueError:
+          print "Line needs to be a list of list of floats.  Got ",pts
+          raise
+        #We need a string that could be a float
+        pts = [[str(x),str(y)] for x,y in pts]
+
         result = {'path':pts,'color':color}
         self.lines.append(result)
 
     def add_polygon(self,pts,fillColor="#880088",fillOpacity=.8,strokeColor="#000000"):
         ''' pts = [[[[pt1x,pt1y],[pt2x,p2y],...],[[hole1x,hole1y],...]]]
             holes (inner polgons) must be oppositely wound, CW vs CCW '''
+        #TODO validate polygon data
         result = {'polygon':pts,'fillColor':fillColor,'fillOpacity':fillOpacity,'strokeColor':strokeColor}
         self.polygons.append(result)
 
