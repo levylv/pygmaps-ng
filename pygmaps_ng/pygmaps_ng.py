@@ -52,7 +52,7 @@ In writing your own json objects, use this to debug broken data:
 
 '''
 
-gmmup_loc = path.join(BASE_DIR,'gmm-up/')  #location of gmm-up (contains static.html, javascripts/, etc.)
+gmmup_loc = path.join(BASE_DIR,'gmmup/')  #location of gmm-up (contains static.html, javascripts/, etc.)
 
 class Map(object):
     apps = []
