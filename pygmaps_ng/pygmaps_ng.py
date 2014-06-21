@@ -136,10 +136,15 @@ class App(object):
         return result
 
 class DataSet(object):
-    def __init__(self, id, title="No Title",key_color="#FFFFFF"):
+    '''Object for adding markers, lines and polygons to an app.
+    latlon = True means the coordinates are [lat, lon].
+    latlon = False reverses the coordinate order'''
+
+    def __init__(self, id, title="No Title",key_color="#888888",latlon = True):
         self.id = id
         self.title = title
         self.key_color = key_color
+        self.latlon = latlon
         self.markers = []
         self.lines = []
         self.polygons = []
@@ -148,11 +153,15 @@ class DataSet(object):
         '''pt = (lat, lon)'''
         try:
           #check type and shape of pt
-          if len([float(x) for x in pt]) != 2:
+          pt = [float(x) for x in pt[:3]]
+          if len(pt) != 2:
             raise ValueError
         except ValueError:
           print "Expected pt to be [float, float] but got",type(pt),pt
           raise
+        if not self.latlon:
+            pt.reverse()
+
         color = color.strip('#') #the one time we dont want '#'
         result = {'lat':str(pt[0]),'lon':str(pt[1]),'color':color}
         if title:
@@ -162,24 +171,50 @@ class DataSet(object):
         self.markers.append(result)
 
     def add_line(self,pts,color="#880000"):
-        '''pts is a list of lists, the inner list being [lat,lon]'''
+        '''input is a list of lists, 
+        the inner list being [lat,lon]'''
+
         try:
            if not len([[float(x),float(y)] for x,y in pts]) > 1:
              raise ValueError
         except ValueError:
-          print "Line needs to be a list of list of floats.  Got ",pts
+          print "Bad LineString.  Got ",pts
           raise
         #We need a string that could be a float
-        pts = [[str(x),str(y)] for x,y in pts]
+        if self.latlon:
+          pts = [[str(x),str(y)] for x,y in pts]
+        else:
+          pts = [[str(y),str(x)] for x,y in pts]
 
         result = {'path':pts,'color':color}
         self.lines.append(result)
 
-    def add_polygon(self,pts,fillColor="#880088",fillOpacity=.8,strokeColor="#000000"):
-        ''' pts = [[[[pt1x,pt1y],[pt2x,p2y],...],[[hole1x,hole1y],...]]]
-            holes (inner polgons) must be oppositely wound, CW vs CCW '''
-        #TODO validate polygon data
-        result = {'polygon':pts,'fillColor':fillColor,'fillOpacity':fillOpacity,'strokeColor':strokeColor}
+    def add_polygon(self,pts,fillColor="#880088",
+                    fillOpacity=.8,strokeColor="#000000"):
+        ''' pts = [[[[pt1x,pt1y],[pt2x,p2y],...],
+                    [[hole1x,hole1y],...]
+                  ]]
+            holes (inner polgons) must be oppositely wound, 
+             (CW vs CCW) '''
+        try:
+          #pressure the data for errors.  Better know now than
+          # wonder why the javascript doesn't work
+          polygon = list(pts)
+          for complex_poly in polygon:
+            complex_poly = list(complex_poly)
+            for simple_poly in complex_poly:
+              simple_poly = list(simple_poly)
+              for valpair in simple_poly:
+                valpair = [str(float(valpair[0])), 
+                             str(float(valpair[1]))]
+                if not self.latlon:
+                   valpair.reverse()
+        except ValueError:
+           print "did not get a good data structure for polygon"
+           raise
+                        
+        result = {'polygon':pts,'fillColor':fillColor,
+           'fillOpacity':fillOpacity,'strokeColor':strokeColor}
         self.polygons.append(result)
 
     def data(self):
@@ -196,7 +231,8 @@ class DataSet(object):
 
 
 def csv2markers(infile,default_color='#000088'):
-    '''takes a filename and returns a list lists where inner list is [pt, color,title,text] '''
+    '''takes a filename and returns a list lists where 
+       inner list is [pt, color,title,text] '''
     with open(infile, 'rb') as f:
       reader = DictReader(f, delimiter='\t')
       result = []
