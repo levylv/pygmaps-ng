@@ -12,7 +12,7 @@ setup(name=name,
     author='Elliot Hallmark',
     url='https://github.com/Permafacture/pygmaps-ng/',
     packages=[name],
-    install_requires=['beautifulsoup4==4.3.2','brewer2mpl==1.4'],
+    install_requires=['beautifulsoup4==4.3.2','brewer2mpl==1.4','jsmin'],
     #data_files= datafiles,
     package_data = {name:packagefiles}
     )

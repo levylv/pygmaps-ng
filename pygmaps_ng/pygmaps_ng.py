@@ -5,7 +5,7 @@ import re
 
 import bs4
 from jsmin import jsmin
-    
+
 BASE_DIR = path.dirname(path.abspath(__file__))
 
 '''
@@ -59,12 +59,12 @@ class Map(object):
         self.apps = list()
 
     def data(self):
-        result = [] 
+        result = []
         for app in self.apps:
           tmp = {'id':app.id,'title':app.title}
           tmp.update(app.data())
           result.append(tmp)
-        return result   
+        return result
 
     def build_page(self,center=[30.320000, -97.770000],zoom=5,outfile='output.html'):
         '''
@@ -78,34 +78,34 @@ class Map(object):
         soup = bs4.BeautifulSoup(open(path_join('static.html')).read())
         stylesheets = soup.findAll("link", {"rel": "stylesheet"})
         for s in stylesheets:
-    	  t = soup.new_tag('style')
-    	  c = bs4.element.NavigableString(open(path_join(s["href"])).read())
-    	  t.insert(0,c)
-    	  t['type'] = 'text/css'
-    	  s.replaceWith(t)
-    
+            t = soup.new_tag('style')
+            c = bs4.element.NavigableString(open(path_join(s["href"])).read())
+            t.insert(0,c)
+            t['type'] = 'text/css'
+            s.replaceWith(t)
+
         #insert data into javascript file
-        jsonMarker ='/* INSERT JSON DATA HERE */' 
+        jsonMarker ='/* INSERT JSON DATA HERE */'
 
         data = self.data()
-        #print "data: ",data
+        #print("data: ",data)
         jsonData = str(data)[1:-1]	#strip the outer {} because it is being inserted into {}
-        #print jsonData
-     
+        #print(jsonData)
+
         javascripts = soup.findAll("script")
         for s in javascripts:
-    	  t = soup.new_tag('script')
-    	  #print s['src']
-    	  if s['src'][:4] != 'http':
-    	    c = bs4.element.NavigableString(open(path_join(s["src"])).read().replace(jsonMarker,jsonData))
-            #print "navstring ",c
-    	    t.insert(0,c)
-    	    t['type'] = 'text/javascript'
-    	    s.replaceWith(t)
-    
+            t = soup.new_tag('script')
+            #print(s['src'])
+            if s['src'][:4] != 'http':
+                c = bs4.element.NavigableString(open(path_join(s["src"])).read().replace(jsonMarker,jsonData))
+                #print("navstring ",c)
+                t.insert(0,c)
+                t['type'] = 'text/javascript'
+                s.replaceWith(t)
+
         #the compiled page:
         page = str(soup.prettify(formatter=None))
-        
+
         #use tags in that javascript to insert the map options
         options_tag = re.compile(r'/\* OPTIONS TAG START \*/((.|\n)*)/\* OPTIONS TAG END \*/')
         options = '''
@@ -115,9 +115,9 @@ class Map(object):
         center: centerlatlng,
         mapTypeId: google.maps.MapTypeId.ROADMAP
         };''' % (center[0],center[1],zoom)
-        
-    
-    
+
+
+
         open(outfile, "w").write(jsmin(re.sub(options_tag,options,page)))
 
 
@@ -157,7 +157,7 @@ class DataSet(object):
           if len(pt) != 2:
             raise ValueError
         except ValueError:
-          print "Expected pt to be [float, float] but got",type(pt),pt
+          print("Expected pt to be [float, float] but got",type(pt),pt)
           raise
         if not self.latlon:
             pt.reverse()
@@ -178,7 +178,7 @@ class DataSet(object):
            if not len([[float(x),float(y)] for x,y in pts]) > 1:
              raise ValueError
         except ValueError:
-          print "Bad LineString.  Got ",pts
+          print("Bad LineString.  Got ",pts)
           raise
         #We need a string that could be a float
         if self.latlon:
@@ -205,14 +205,14 @@ class DataSet(object):
             for simple_poly in complex_poly:
               simple_poly = list(simple_poly)
               for valpair in simple_poly:
-                valpair = [str(float(valpair[0])), 
+                valpair = [str(float(valpair[0])),
                              str(float(valpair[1]))]
                 if not self.latlon:
                    valpair.reverse()
         except ValueError:
-           print "did not get a good data structure for polygon"
+           print("did not get a good data structure for polygon")
            raise
-                        
+
         result = {'polygon':pts,'fillColor':fillColor,
            'fillOpacity':fillOpacity,'strokeColor':strokeColor}
         self.polygons.append(result)
@@ -221,7 +221,7 @@ class DataSet(object):
         '''return data'''
         result = {'color':self.key_color, 'title':self.title}
         for p in self.markers:
-          #if no markers, markers key isn't created  
+          #if no markers, markers key isn't created
           result.setdefault('markers',[]).append(p)
         for l in self.lines:
           result.setdefault('lines',[]).append(l)
@@ -239,37 +239,37 @@ def csv2markers(infile,default_color='#000088'):
       color = default_color
       for i,row in enumerate(reader):
 
-    	try:
-    	    pt = [row['lat'],row['lon']]
-    	except KeyError:
-    	    print '%s was malformed. needs "lat" and "lon" columns.' % filename
-    	    break
-    
-    	try:
-    	    color = str(row['color'].replace('','')) #replace is to trigger error for None
-    	except AttributeError:
-    	    #if only one point has a color, those after it will have the same color
-    	    pass
-    	except KeyError:
-    	    #if only one point has a color, those after it will have the same color
-    	    pass
-    
-    	try:
-    	    title = row['title']
-    	except KeyError:
-            title = None
-    
-    	try:
-    	    text = row['text']
-    	except KeyError:
-            text = None
-        
-    	result.append([pt,color,title,text])
+            try:
+                pt = [row['lat'],row['lon']]
+            except KeyError:
+                print('%s was malformed. needs "lat" and "lon" columns.' % filename)
+                break
+
+            try:
+                color = str(row['color'].replace('','')) #replace is to trigger error for None
+            except AttributeError:
+                #if only one point has a color, those after it will have the same color
+                pass
+            except KeyError:
+                #if only one point has a color, those after it will have the same color
+                pass
+
+            try:
+                title = row['title']
+            except KeyError:
+                title = None
+
+            try:
+                text = row['text']
+            except KeyError:
+                text = None
+
+            result.append([pt,color,title,text])
     return result
 
 def csv2lines(infile, default_color = '#000000'):
-    '''takes a filename and returns a list of dictionaries with keys 'path':[[lat, lng],], 
-	'color', and optionally, 'editable' '''
+    '''takes a filename and returns a list of dictionaries with keys 'path':[[lat, lng],],
+    'color', and optionally, 'editable' '''
     with open(infile, 'rb') as f:
       reader = DictReader(f, delimiter='\t')
       color = default_color
@@ -291,7 +291,7 @@ def csv2lines(infile, default_color = '#000000'):
           path.append([lat,lng])
           try:
             if not row['color']:
-              #print "Called"
+              #print("Called")
               raise KeyError
             else:
               color = '#'+row['color']
@@ -301,7 +301,7 @@ def csv2lines(infile, default_color = '#000000'):
           except KeyError:
             #if only one point has a color, those after it will have the same color
             pass
-            
+
     #one more push to put whatever is left into the result
     result.append([path,color])
     return result
@@ -309,7 +309,7 @@ def csv2lines(infile, default_color = '#000000'):
 
 def map_from_csvs(data_dir = './example_data'):
     '''
-	Builds applications from directory tree of .csv's
+    Builds applications from directory tree of .csv's
      
         data_dir/
           App1/
