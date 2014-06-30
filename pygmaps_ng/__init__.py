@@ -1,1 +1,1 @@
-from pygmaps_ng import *
+from .pygmaps_ng import *
