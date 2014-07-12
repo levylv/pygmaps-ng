@@ -1,2 +1,4 @@
 *.swp
+*.swo
 *.pyc
+pygmaps_ng.egg-info/

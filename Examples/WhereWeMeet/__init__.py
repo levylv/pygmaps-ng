@@ -1,4 +1,14 @@
 '''
+
+DEPRECATED
+
+See contour example in pygmaps_ng.matplottools
+
+Why is this even still here?
+
+'''
+
+'''
 Where We Meet
 
 An example of drawing contour lines around areas of total drive time for 

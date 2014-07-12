@@ -196,7 +196,7 @@ class DataSet(object):
                   ]]
             holes (inner polgons) must be oppositely wound, 
              (CW vs CCW) '''
-        try:
+        '''try:
           #pressure the data for errors.  Better know now than
           # wonder why the javascript doesn't work
           polygon = list(pts)
@@ -212,7 +212,7 @@ class DataSet(object):
         except ValueError:
            print "did not get a good data structure for polygon"
            raise
-                        
+        '''                
         result = {'polygon':pts,'fillColor':fillColor,
            'fillOpacity':fillOpacity,'strokeColor':strokeColor}
         self.polygons.append(result)
