@@ -1,7 +1,12 @@
 #!/usr/bin/python
+#python3 compatability
+from __future__ import print_function
+
 from csv import DictReader
 from os import path, listdir
 import re
+from liljson.polsimplify import polygon_simplify
+
 
 import bs4
 from jsmin import jsmin
@@ -54,6 +59,21 @@ In writing your own json objects, use this to debug broken data:
 
 gmmup_loc = path.join(BASE_DIR,'gmmup/')  #location of gmm-up (contains static.html, javascripts/, etc.)
 
+def saferound(number,ndigits):
+    '''override built in round to do nothing if ndigits is None'''
+    if ndigits == None:
+      return float(number)
+    else:
+      return round(number,ndigits)
+
+def debug_polygon(polygon):
+    print("Polygon Error: ")
+    print("level 0 should be list, got ", type(polygon))
+    print("level 1 should be list, got ", type(polygon[0]))
+    print("level 2 should be list of length 2, got ",type(polygon[0][0]), polygon[0][0])
+    print("level 3 should be a number, got ", polygon[0][0][0])
+ 
+
 class Map(object):
     def __init__(self):
         self.apps = list()
@@ -88,8 +108,8 @@ class Map(object):
         jsonMarker ='/* INSERT JSON DATA HERE */'
 
         data = self.data()
-        #print("data: ",data)
-        jsonData = str(data)[1:-1]	#strip the outer {} because it is being inserted into {}
+        #strip the outer {} because it is being inserted into {}
+        jsonData = str(data)[1:-1]	
         #print(jsonData)
 
         javascripts = soup.findAll("script")
@@ -125,8 +145,8 @@ class Map(object):
 class App(object):
     def __init__(self,id, title="No Title"):
         '''id must be html safe (no spaces or anything fancy)'''
-        self.id = id
-        self.title = title
+        self.id = str(id)
+        self.title = str(title)
         self.datasets = []
 
     def data(self):
@@ -140,20 +160,23 @@ class DataSet(object):
     latlon = True means the coordinates are [lat, lon].
     latlon = False reverses the coordinate order'''
 
-    def __init__(self, id, title="No Title",key_color="#888888",latlon = True):
-        self.id = id
-        self.title = title
+    def __init__(self, id, title="No Title",key_color="#888888",latlon = True, precision=False):
+        self.id = str(id)
+        self.precision = precision
+        self.title = str(title)
         self.key_color = key_color
         self.latlon = latlon
         self.markers = []
         self.lines = []
         self.polygons = []
 
-    def add_marker(self,pt,color='#000088',title=None,text=None):
+    def add_marker(self,pt,color='#000088',title=None,text=None,precision=False):
         '''pt = (lat, lon)'''
+        if precision == None:
+          precision = self.precision
         try:
           #check type and shape of pt
-          pt = [float(x) for x in pt[:3]]
+          pt = [saferound(float(x),precision) for x in pt[:3]]
           if len(pt) != 2:
             raise ValueError
         except ValueError:
@@ -165,15 +188,16 @@ class DataSet(object):
         color = color.strip('#') #the one time we dont want '#'
         result = {'lat':str(pt[0]),'lon':str(pt[1]),'color':color}
         if title:
-         result['title'] = title
+         result['title'] = str(title)
         if text:
-         result['text'] = text
+         result['text'] = str(text)
         self.markers.append(result)
 
-    def add_line(self,pts,color="#880000"):
+    def add_line(self,pts,color="#880000",precision=None):
         '''input is a list of lists, 
         the inner list being [lat,lon]'''
-
+        if precision == None:
+          precision = self.precision
         try:
            if not len([[float(x),float(y)] for x,y in pts]) > 1:
              raise ValueError
@@ -182,38 +206,48 @@ class DataSet(object):
           raise
         #We need a string that could be a float
         if self.latlon:
-          pts = [[str(x),str(y)] for x,y in pts]
+          pts = [[str(saferound(x,precision)),str(saferound(y,precision))] for x,y in pts]
         else:
-          pts = [[str(y),str(x)] for x,y in pts]
+          pts = [[str(saferound(y,precision)),str(saferound(x,precision))] for x,y in pts]
 
         result = {'path':pts,'color':color}
         self.lines.append(result)
 
-    def add_polygon(self,pts,fillColor="#880088",
-                    fillOpacity=.8,strokeColor="#000000"):
-        ''' pts = [[[[pt1x,pt1y],[pt2x,p2y],...],
+    def add_polygon(self,pts,threshold=0,fillColor="#880088",
+                    fillOpacity=.8,strokeColor="#000000",
+                    precision=None):
+        ''' threshold > 0 means simplify the polygon
+
+            pts = [[[[pt1x,pt1y],[pt2x,p2y],...],
                     [[hole1x,hole1y],...]
                   ]]
             holes (inner polgons) must be oppositely wound, 
              (CW vs CCW) '''
+        if precision == None:
+          precision = self.precision
+            
         try:
           #pressure the data for errors.  Better know now than
           # wonder why the javascript doesn't work
           polygon = list(pts)
-          for complex_poly in polygon:
-            complex_poly = list(complex_poly)
-            for simple_poly in complex_poly:
-              simple_poly = list(simple_poly)
-              for valpair in simple_poly:
-                valpair = [str(float(valpair[0])),
-                             str(float(valpair[1]))]
+          for i,complex_poly in enumerate(polygon):
+            #safe to modify elements of array, just not 
+            # the array itself
+            polygon[i] = list(complex_poly)            
+            for j,simple_poly in enumerate(polygon[i]):
+              polygon[i][j] = polygon_simplify(simple_poly,
+                                          threshold=threshold)
+              for k,valpair in enumerate(polygon[i][j]):
+                valpair = [str(saferound(valpair[0],precision)),
+                             str(saferound(valpair[1],precision))]
                 if not self.latlon:
                    valpair.reverse()
-        except ValueError:
-           print("did not get a good data structure for polygon")
+                polygon[i][j][k] = valpair
+        except (ValueError, TypeError):
+           debug_polygon(pts)
            raise
          
-        result = {'polygon':pts,'fillColor':fillColor,
+        result = {'polygon':polygon,'fillColor':fillColor,
            'fillOpacity':fillOpacity,'strokeColor':strokeColor}
         self.polygons.append(result)
 
