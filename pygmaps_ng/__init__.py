@@ -1,3 +1,3 @@
 from pygmaps_ng import *
 import matplottools
-import colors
+import color_gen
