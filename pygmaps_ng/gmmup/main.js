@@ -88,7 +88,14 @@ function initialize() {
               appHash = app_hash; }
         });
 
-        $.each (appHash[type], function(shape, shapeHash) {
+        var dataHash = {}; 
+        $.each( appHash['data'], function( index, data_hash ) {
+	    //go through and get app
+            if (data_hash['id'] === type){
+              dataHash = data_hash; }
+        });
+
+        $.each (dataHash, function(shape, shapeHash) {
           if (shape == "polygons") {
             $.each( shapeHash, function( index, polygonHash ){
 	      $.each( polygonHash["polygon"], function( index, coordArray){
@@ -207,16 +214,16 @@ function initialize() {
         });
 
 
-        $.each(appHash, function(type, metaHash){
-          if ($.inArray(type,metaTags) === -1){
-	    var color = metaHash['color']
-	    if (typeof metaHash['title'] === 'undefined') {
-	      title = type;  }
-	    else { title = metaHash['title']; };
+        $.each(appHash['data'], function(index, dataHash){
+          if ($.inArray(dataHash['id'],metaTags) === -1){
+	    var color = dataHash['color']
+	    if (typeof dataHash['title'] === 'undefined') {
+	      title = dataHash['id'];  }
+	    else { title = dataHash['title']; };
 
             $("#"+app+"_app_list").append("<li>\
               <span class='color-box' style='background:"+color+";'></span>\
-              <input type='checkbox' data-type='"+type+"' class='map-option-"+app+"'>"+title+"\
+              <input type='checkbox' data-type='"+dataHash['id']+"' class='map-option-"+app+"'>"+title+"\
             </li>");
          };
         });
