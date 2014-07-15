@@ -150,9 +150,9 @@ class App(object):
         self.datasets = []
 
     def data(self):
-        result = {'id':self.id,'title':self.title}
+        result = {'id':self.id,'title':self.title,'data':list()}
         for d in self.datasets:
-          result[d.id] = d.data()
+          result['data'].append(d.data())
         return result
 
 class DataSet(object):
@@ -160,7 +160,7 @@ class DataSet(object):
     latlon = True means the coordinates are [lat, lon].
     latlon = False reverses the coordinate order'''
 
-    def __init__(self, id, title="No Title",key_color="#888888",latlon = True, precision=False):
+    def __init__(self, id, title="No Title",key_color="#888888",latlon = True, precision=None):
         self.id = str(id)
         self.precision = precision
         self.title = str(title)
@@ -170,7 +170,7 @@ class DataSet(object):
         self.lines = []
         self.polygons = []
 
-    def add_marker(self,pt,color='#000088',title=None,text=None,precision=False):
+    def add_marker(self,pt,color='#000088',title=None,text=None,precision=None):
         '''pt = (lat, lon)'''
         if precision == None:
           precision = self.precision
@@ -253,7 +253,7 @@ class DataSet(object):
 
     def data(self):
         '''return data'''
-        result = {'color':self.key_color, 'title':self.title}
+        result = {'id':self.id,'color':self.key_color, 'title':self.title}
         for p in self.markers:
           #if no markers, markers key isn't created
           result.setdefault('markers',[]).append(p)

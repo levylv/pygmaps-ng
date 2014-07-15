@@ -1,4 +1,4 @@
-def gradient(n,start=(255,255,255),end=(0,0,255),overflow=(0,0,0)):
+def gradient(n,start=(0,0,255),end=(255,255,255),overflow=(0,0,0)):
     '''
     returns a generator of hex colors that gradate from the 
     start color to the end color in n steps.  If overflow,
