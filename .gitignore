@@ -3,5 +3,5 @@
 *.pyc
 pygmaps_ng.egg-info/
 Examples/gis_polygons/gis_data/
-!Examples/gis_polygons/gis_data/.gitkeep
+! Examples/gis_polygons/gis_data/.gitkeep
 

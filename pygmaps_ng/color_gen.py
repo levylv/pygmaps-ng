@@ -3,6 +3,10 @@ def int2rgb(i):
     into a list of 0's and 255's'''
     return tuple([int(x)*255 for x in bin(i)[2:][:3].zfill(3)])
 
+def hex2rgb(h):
+    '''turn #FF0088 into (255,0,127)'''
+    c=h.strip('#')
+    return tuple([int('%s%s'%(c[x],c[x+1]),16) for x in [0,2,4]])
 
 def gradient(n,start=(0,0,255),end=(255,255,255),overflow=(0,0,0)):
     '''
