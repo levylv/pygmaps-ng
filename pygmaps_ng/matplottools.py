@@ -8,26 +8,26 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 from numpy import linspace
 
-def uniform_grid(X,Y,Z):
+def uniform_grid(X,Y,Z,grid_shape=(300,300)):
 
     #http://wiki.scipy.org/Cookbook/Matplotlib/Gridding_irregularly_spaced_data
     # define grid.
-    xi = linspace(X.min(),X.max(),len(X))
-    yi = linspace(Y.min(),Y.max(),len(Y))
-    zi = griddata((X, Y), Z, (xi[None,:], yi[:,None]), method='cubic')
+    xi = linspace(X.min(),X.max(),grid_shape[0])
+    yi = linspace(Y.min(),Y.max(),grid_shape[1])
+    zi = griddata((X, Y), Z, (xi[None,:], yi[:,None]), method='linear')
     return xi,yi,zi
 
 def mplcolor2hex(mplcolor):
     ''' take (r,g,b,a) and return hex representation '''
     return '#%02X%02X%02X' % tuple([x*255 for x in mplcolor[:3]])
 
-def get_contour_paths(X,Y,Z,n,**kwargs):
+def get_contour_paths(X,Y,Z,n,grid_shape=(300,300),**kwargs):
     '''
     use like matplotlib.pyplot.contourf to return contour paths, colors and values.
     Assumes non-uniform data (not on a grid) and interpolates to a grid
     Assumes lowest value is within lowest level
     ''' 
-    X,Y,Z = uniform_grid(X,Y,Z)
+    X,Y,Z = uniform_grid(X,Y,Z,grid_shape=grid_shape)
     C = plt.contourf(X,Y,Z,n,**kwargs)
     #plt.show()
     levels = []
