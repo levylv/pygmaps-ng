@@ -5,13 +5,15 @@ from __future__ import print_function
 from csv import DictReader
 from os import path, listdir
 import re
-from liljson.polsimplify import polygon_simplify
-
+from polysimplify import VWSimplifier as simplifier
 
 import bs4
 from jsmin import jsmin
 
 BASE_DIR = path.dirname(path.abspath(__file__))
+
+
+
 
 '''
 
@@ -59,6 +61,7 @@ In writing your own json objects, use this to debug broken data:
 
 gmmup_loc = path.join(BASE_DIR,'gmmup/')  #location of gmm-up (contains static.html, javascripts/, etc.)
 
+     
 def saferound(number,ndigits):
     '''override built in round to do nothing if ndigits is None'''
     if ndigits == None:
@@ -216,7 +219,7 @@ class DataSet(object):
     def add_polygon(self,pts,threshold=0,fillColor="#880088",
                     fillOpacity=.8,strokeColor="#000000",
                     precision=None):
-        ''' threshold > 0 means simplify the polygon
+        ''' epsilon > 0 means simplify the polygon
 
             pts = [[[[pt1x,pt1y],[pt2x,p2y],...],
                     [[hole1x,hole1y],...]
@@ -235,8 +238,7 @@ class DataSet(object):
             # the array itself
             polygon[i] = list(complex_poly)            
             for j,simple_poly in enumerate(polygon[i]):
-              polygon[i][j] = polygon_simplify(simple_poly,
-                                          threshold=threshold)
+              polygon[i][j] = list(simplifier(simple_poly).from_threshold(threshold))
               for k,valpair in enumerate(polygon[i][j]):
                 valpair = [str(saferound(valpair[0],precision)),
                              str(saferound(valpair[1],precision))]

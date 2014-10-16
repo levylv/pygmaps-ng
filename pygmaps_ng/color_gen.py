@@ -1,3 +1,13 @@
+try:
+  import brewer2mpl
+except ImportError:
+  print "  brewer2mpl not installed"
+else:
+  #I want some helper functions but don't know what yet
+  pass
+    
+
+
 def int2rgb(i):
     '''Turn integer into its three LSB and then turn that
     into a list of 0's and 255's'''
@@ -7,6 +17,10 @@ def hex2rgb(h):
     '''turn #FF0088 into (255,0,127)'''
     c=h.strip('#')
     return tuple([int('%s%s'%(c[x],c[x+1]),16) for x in [0,2,4]])
+
+def rgb2hex(rgb):
+    '''turn (255,0,127) into #FF0088'''
+    return "#%02X%02X%02X" % rgb
 
 def gradient(n,start=(0,0,255),end=(255,255,255),overflow=(0,0,0)):
     '''

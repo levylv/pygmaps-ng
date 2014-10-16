@@ -8,13 +8,13 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 from numpy import linspace
 
-def uniform_grid(X,Y,Z,grid_shape=(300,300)):
+def uniform_grid(X,Y,Z,grid_shape=(300,300),method='cubic'):
 
     #http://wiki.scipy.org/Cookbook/Matplotlib/Gridding_irregularly_spaced_data
     # define grid.
     xi = linspace(X.min(),X.max(),grid_shape[0])
     yi = linspace(Y.min(),Y.max(),grid_shape[1])
-    zi = griddata((X, Y), Z, (xi[None,:], yi[:,None]), method='linear')
+    zi = griddata((X, Y), Z, (xi[None,:], yi[:,None]), method=method)
     return xi,yi,zi
 
 def mplcolor2hex(mplcolor):

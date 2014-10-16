@@ -277,6 +277,12 @@ function initialize() {
     };
   });
 }
+
+// Add lat lon tooltip.  Might be annoying and need to be just an option...
+google.maps.event.addListener(map, 'click', function(event) {
+            alert(event.latLng);
+        });
+
 /*
   //I stole this from the info window demo @ https://developers.google.com/maps/documentation/javascript/examples/infowindow-simple
   //Not sure what it does or if it is needed.
