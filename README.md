@@ -9,7 +9,7 @@ Installation:
 
     pip can install this pygmaps_ng into a virtual env or system wide
 
-    $ pip install git+https://github.com/Permafacture/pygmaps-ng.git#Egg=pygmaps_ng
+    $ pip install git+https://github.com/Permafacture/pygmaps-ng.git#egg=pygmaps_ng
 
 Usage Example:
 

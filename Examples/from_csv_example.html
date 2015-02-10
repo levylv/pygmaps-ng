@@ -17,7 +17,7 @@ function initialize() {
 var destructableStuff = {}
 
 
-var jsonData = [{'group_3': {'color': '#00FF00', 'markers': [{'lat': '30.31018122518914', 'color': '00FF00', 'lon': '-97.67733724637303'}, {'lat': '30.358466906237428', 'color': '00FF00', 'lon': '-97.73391112056234'}, {'lat': '30.385026119589842', 'color': '00FF00', 'lon': '-97.72196970646121'}, {'lat': '30.365699371380455', 'color': '00FF00', 'lon': '-97.62773014880742'}, {'lat': '30.438614324938616', 'color': '00FF00', 'lon': '-97.6826894383963'}, {'lat': '30.341068324208663', 'color': '00FF00', 'lon': '-97.62825718256074'}, {'lat': '30.33700354478915', 'color': '00FF00', 'lon': '-97.68942607217284'}, {'lat': '30.33897857201819', 'color': '00FF00', 'lon': '-97.74371846340813'}, {'lat': '30.42327866013852', 'color': '00FF00', 'lon': '-97.74596056782018'}, {'lat': '30.428851988088', 'color': '00FF00', 'lon': '-97.67555490866194'}], 'title': 'Group 3'}, 'group_2': {'color': '#FF0000', 'markers': [{'lat': '30.28231312371183', 'color': 'FF0000', 'lon': '-97.71660745293613'}, {'lat': '30.387618759260768', 'color': 'FF0000', 'lon': '-97.70791169902117'}, {'lat': '30.387207922014078', 'color': 'FF0000', 'lon': '-97.69277931745854'}, {'lat': '30.366327324122807', 'color': 'FF0000', 'lon': '-97.73042409713715'}, {'lat': '30.291214947643365', 'color': 'FF0000', 'lon': '-97.68072411838797'}, {'lat': '30.304690205047848', 'color': 'FF0000', 'lon': '-97.64122207573168'}, {'lat': '30.30755413298072', 'color': 'FF0000', 'lon': '-97.67969229361346'}, {'lat': '30.34451111821747', 'color': 'FF0000', 'lon': '-97.73643158903819'}, {'lat': '30.3793008287575', 'color': 'FF0000', 'lon': '-97.71556425829584'}, {'lat': '30.253112372957855', 'color': 'FF0000', 'lon': '-97.61899249559977'}], 'title': 'Group 2'}, 'title': 'Random points', 'group_4': {'color': '#0000FF', 'markers': [{'lat': '30.264797850816155', 'color': '0000FF', 'lon': '-97.69103812288456'}, {'lat': '30.31465986714931', 'color': '0000FF', 'lon': '-97.64847974050268'}, {'lat': '30.242274263310588', 'color': '0000FF', 'lon': '-97.65768551787986'}, {'lat': '30.361024902964793', 'color': '0000FF', 'lon': '-97.61993905595294'}, {'lat': '30.26116777280814', 'color': '0000FF', 'lon': '-97.6804837654304'}, {'lat': '30.32854235653523', 'color': '0000FF', 'lon': '-97.63149391412287'}, {'lat': '30.253188156331642', 'color': '0000FF', 'lon': '-97.60668638425936'}, {'lat': '30.245812978019533', 'color': '0000FF', 'lon': '-97.62279967477525'}, {'lat': '30.283123175761787', 'color': '0000FF', 'lon': '-97.68245132097597'}, {'lat': '30.359117766932897', 'color': '0000FF', 'lon': '-97.61893030569934'}], 'title': 'Group 4'}, 'id': 'random_points'}];  
+var jsonData = [{'data': [{'color': '#FF0000', 'id': 'group_2', 'markers': [{'lat': '30.2823131237', 'color': 'FF0000', 'lon': '-97.7166074529'}, {'lat': '30.3876187593', 'color': 'FF0000', 'lon': '-97.707911699'}, {'lat': '30.387207922', 'color': 'FF0000', 'lon': '-97.6927793175'}, {'lat': '30.3663273241', 'color': 'FF0000', 'lon': '-97.7304240971'}, {'lat': '30.2912149476', 'color': 'FF0000', 'lon': '-97.6807241184'}, {'lat': '30.304690205', 'color': 'FF0000', 'lon': '-97.6412220757'}, {'lat': '30.307554133', 'color': 'FF0000', 'lon': '-97.6796922936'}, {'lat': '30.3445111182', 'color': 'FF0000', 'lon': '-97.736431589'}, {'lat': '30.3793008288', 'color': 'FF0000', 'lon': '-97.7155642583'}, {'lat': '30.253112373', 'color': 'FF0000', 'lon': '-97.6189924956'}], 'title': 'Group 2'}, {'color': '#00FF00', 'id': 'group_3', 'markers': [{'lat': '30.3101812252', 'color': '00FF00', 'lon': '-97.6773372464'}, {'lat': '30.3584669062', 'color': '00FF00', 'lon': '-97.7339111206'}, {'lat': '30.3850261196', 'color': '00FF00', 'lon': '-97.7219697065'}, {'lat': '30.3656993714', 'color': '00FF00', 'lon': '-97.6277301488'}, {'lat': '30.4386143249', 'color': '00FF00', 'lon': '-97.6826894384'}, {'lat': '30.3410683242', 'color': '00FF00', 'lon': '-97.6282571826'}, {'lat': '30.3370035448', 'color': '00FF00', 'lon': '-97.6894260722'}, {'lat': '30.338978572', 'color': '00FF00', 'lon': '-97.7437184634'}, {'lat': '30.4232786601', 'color': '00FF00', 'lon': '-97.7459605678'}, {'lat': '30.4288519881', 'color': '00FF00', 'lon': '-97.6755549087'}], 'title': 'Group 3'}, {'color': '#0000FF', 'id': 'group_4', 'markers': [{'lat': '30.2647978508', 'color': '0000FF', 'lon': '-97.6910381229'}, {'lat': '30.3146598671', 'color': '0000FF', 'lon': '-97.6484797405'}, {'lat': '30.2422742633', 'color': '0000FF', 'lon': '-97.6576855179'}, {'lat': '30.361024903', 'color': '0000FF', 'lon': '-97.619939056'}, {'lat': '30.2611677728', 'color': '0000FF', 'lon': '-97.6804837654'}, {'lat': '30.3285423565', 'color': '0000FF', 'lon': '-97.6314939141'}, {'lat': '30.2531881563', 'color': '0000FF', 'lon': '-97.6066863843'}, {'lat': '30.245812978', 'color': '0000FF', 'lon': '-97.6227996748'}, {'lat': '30.2831231758', 'color': '0000FF', 'lon': '-97.682451321'}, {'lat': '30.3591177669', 'color': '0000FF', 'lon': '-97.6189303057'}], 'title': 'Group 4'}], 'id': 'random_points', 'title': 'Random points'}];  
 
 var metaTags = ['title','id','options']; 
 
@@ -57,7 +57,14 @@ if (app_hash['id'] === app){
 appHash = app_hash; }
 });
 
-$.each (appHash[type], function(shape, shapeHash) {
+var dataHash = {}; 
+$.each( appHash['data'], function( index, data_hash ) {
+
+if (data_hash['id'] === type){
+dataHash = data_hash; }
+});
+
+$.each (dataHash, function(shape, shapeHash) {
 if (shape == "polygons") {
 $.each( shapeHash, function( index, polygonHash ){
 $.each( polygonHash["polygon"], function( index, coordArray){
@@ -176,16 +183,16 @@ appHash = app_hash; }
 });
 
 
-$.each(appHash, function(type, metaHash){
-if ($.inArray(type,metaTags) === -1){
-var color = metaHash['color']
-if (typeof metaHash['title'] === 'undefined') {
-title = type;  }
-else { title = metaHash['title']; };
+$.each(appHash['data'], function(index, dataHash){
+if ($.inArray(dataHash['id'],metaTags) === -1){
+var color = dataHash['color']
+if (typeof dataHash['title'] === 'undefined') {
+title = dataHash['id'];  }
+else { title = dataHash['title']; };
 
 $("#"+app+"_app_list").append("<li>\
               <span class='color-box' style='background:"+color+";'></span>\
-              <input type='checkbox' data-type='"+type+"' class='map-option-"+app+"'>"+title+"\
+              <input type='checkbox' data-type='"+dataHash['id']+"' class='map-option-"+app+"'>"+title+"\
             </li>");
 };
 });
@@ -240,6 +247,12 @@ handleAppToggle(appName);
 });
 }
 
+
+google.maps.event.addListener(map, 'click', function(event) {
+alert(event.latLng);
+});
+
+
 </script>
 <style type="text/css">
 body{
@@ -253,7 +266,7 @@ position: fixed;
 top: 50px;
 right: 7px;
 z-index: 500;
-
+height: 400px;
 overflow: auto;
 }
 
