@@ -24,5 +24,11 @@ mymap.build_page(center=pt,zoom=14,outfile="NYC.html")
 '''
 
 from pygmaps_ng import *
-import matplottools
+
+try:
+  import matplottools
+except ImportError as e:
+  print '''
+    Warning: matplotlib tools dependancies missing.
+    %s''' % e.message
 import color_gen
