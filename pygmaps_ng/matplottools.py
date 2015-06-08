@@ -6,12 +6,13 @@ from matplotlib import use
 use("AGG")  #turn off graphical backends
 import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
-from numpy import linspace
+from numpy import linspace,array
 
-def uniform_grid(X,Y,Z,grid_shape=(300,300),method='cubic'):
+def uniform_grid(X,Y,Z,grid_shape=(300,300),method='linear'):
 
     #http://wiki.scipy.org/Cookbook/Matplotlib/Gridding_irregularly_spaced_data
     # define grid.
+    X,Y,Z = map(array,(X,Y,Z))  #tuples, lists no good 
     xi = linspace(X.min(),X.max(),grid_shape[0])
     yi = linspace(Y.min(),Y.max(),grid_shape[1])
     zi = griddata((X, Y), Z, (xi[None,:], yi[:,None]), method=method)
@@ -26,7 +27,7 @@ def get_contour_paths(X,Y,Z,n,grid_shape=(300,300),**kwargs):
     use like matplotlib.pyplot.contourf to return contour paths, colors and values.
     Assumes non-uniform data (not on a grid) and interpolates to a grid
     Assumes lowest value is within lowest level
-    ''' 
+    '''
     X,Y,Z = uniform_grid(X,Y,Z,grid_shape=grid_shape)
     C = plt.contourf(X,Y,Z,n,**kwargs)
     #plt.show()
