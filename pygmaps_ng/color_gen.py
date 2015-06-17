@@ -5,6 +5,8 @@ except ImportError:
 else:
   #I want some helper functions but don't know what yet
   pass
+
+almostblack = '#262626'  
     
 
 

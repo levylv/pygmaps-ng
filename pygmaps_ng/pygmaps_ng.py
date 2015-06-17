@@ -1,11 +1,13 @@
-#!/usr/bin/python
+#!/us/rbin/python
 #python3 compatability
 from __future__ import print_function
 
 from csv import DictReader
 from os import path, listdir
 import re
+
 from polysimplify import VWSimplifier as simplifier
+from color_gen import almostblack as black
 
 import bs4
 from jsmin import jsmin
@@ -173,8 +175,9 @@ class DataSet(object):
         self.lines = []
         self.polygons = []
 
-    def add_marker(self,pt,color='#000088',title=None,text=None,precision=None):
+    def add_marker(self,pt,color=None,title=None,text=None,precision=None):
         '''pt = (lat, lon)'''
+        color = color or self.key_color
         if precision == None:
           precision = self.precision
         try:
@@ -196,9 +199,10 @@ class DataSet(object):
          result['text'] = str(text)
         self.markers.append(result)
 
-    def add_line(self,pts,color="#880000",precision=None):
+    def add_line(self,pts,color=None,precision=None):
         '''input is a list of lists, 
         the inner list being [lat,lon]'''
+        color = color or self.key_color
         if precision == None:
           precision = self.precision
         try:
@@ -216,8 +220,8 @@ class DataSet(object):
         result = {'path':pts,'color':color}
         self.lines.append(result)
 
-    def add_polygon(self,pts,threshold=0,fillColor="#880088",
-                    fillOpacity=.8,strokeColor="#000000",
+    def add_polygon(self,pts,threshold=0,fillColor=None,
+                    fillOpacity=.8,strokeColor=black,
                     precision=None):
         ''' epsilon > 0 means simplify the polygon
 
@@ -226,6 +230,7 @@ class DataSet(object):
                   ]]
             holes (inner polgons) must be oppositely wound, 
              (CW vs CCW) '''
+        fillColor = fillColor or self.key_color
         if precision == None:
           precision = self.precision
             
@@ -303,7 +308,7 @@ def csv2markers(infile,default_color='#000088'):
             result.append([pt,color,title,text])
     return result
 
-def csv2lines(infile, default_color = '#000000'):
+def csv2lines(infile, default_color = black):
     '''takes a filename and returns a list of dictionaries with keys 'path':[[lat, lng],],
     'color', and optionally, 'editable' '''
     with open(infile, 'rb') as f:
