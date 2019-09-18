@@ -17,7 +17,7 @@ setup(name=name,
         'brewer2mpl==1.4',
         'jsmin==2.0.11',
         #'numpy==1.8.1',
-        'wsgiref==0.1.2',
+        #'wsgiref==0.1.2',
         ],
     #data_files= datafiles,
     package_data = {name:packagefiles}
